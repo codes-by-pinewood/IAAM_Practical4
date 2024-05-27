@@ -54,7 +54,7 @@ To track the movement of the cells, the images must be processed first, to remov
         \State $gray\_image \gets \text{Grayscale}(image)$
         \State $image\_contrasted \gets \text{ContrastStretch}(image)$
         \State $image\_eroded \gets \text{Erosion}(image\_contrasted)$
-        \State $threshold\_image \gets \text{RangeThreshold}(mage\_eroded)$
+        \State $threshold\_image \gets \text{RangeThreshold}(image\_eroded)$
         \State $image\_labeled \gets \text{Label}(threshold\_image)$
         \State Determine the center, size, and mean of each image
     \EndFor
@@ -73,18 +73,8 @@ To track the movement of the cells, the images must be processed first, to remov
 \par The measurements were then compiled into a dataframe. The center of gravity of each object allowed us to track the movement in each image, as this served as the x- and y-coordinates for the movement. 
 \subsection*{Application of Algorithm and Results}
 
-\section*{Part 4.2}
-\subsection*{Shape and Texture}
-\subsection*{Cell Velocity and Distance Trajectory}
-\subsection*{Differences in Trajectory}
-\subsection*{Differences in Conditions}
-\subsection*{Correlation between speed with shape and texture}
-\section*{Appendix 1}
 
-\documentclass{article}
-\usepackage{graphicx}
 
-\begin{document}
 
 \begin{figure}[h!]
 \centering
@@ -145,6 +135,14 @@ To track the movement of the cells, the images must be processed first, to remov
 \includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b28.png}
 \caption{\label{fig:ChoiceofCells-ControlSeries}The image shows the choice of cells in the \emph{Control Series}}
 \end{figure}
+\section*{Part 4.2}
+\subsection*{Shape and Texture}
+\subsection*{Cell Velocity and Distance Trajectory}
+\subsection*{Differences in Trajectory}
+\subsection*{Differences in Conditions}
+\subsection*{Correlation between speed with shape and texture}
+\section*{Appendix 1}
+
 
 
 \section*{Appendix 2}
