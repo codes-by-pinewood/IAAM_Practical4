@@ -1,0 +1,371 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[english]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{pdflscape} % Add this package for landscape pages
+\usepackage{caption,subcaption}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{Image Analysis Assignment 4}
+\author{Sherry Usman, Megan Mirnalini Sundaram R}
+\begin{document}
+\maketitle
+
+\section*{Question 4.1}
+\subsection*{Choice of Cells}
+\par To pick a set of cells, pre-processing images to detect finer objects better is important. For that we first made the image single-channel by averaging the intensity values over all channels and creating a new gray-scale image. Then we applied morphological operations such as contrast stretching to remove underexposure areas and more accurately highlight the cells. Then we implemented a morphological opening to erode the objects(or foreground) and subsequently dilate them. This was done so that clusters of connected objects could be separated into separate distinct objects (separate cells) for better identification but not so much that smaller objects completely disappear. Then, range thresholding was used to allow emphasis on areas of images with higher intensities (or cells). Lastly, labeling was used to give connected objects a unified symbol for better identification. Through this iterative procedure, we procured a series of images that were ready for image analysis.\newline 
+
+\par For our series of images, we chose a set of points by implementing a function that randomly selected 15 rows from the rows of objects in the labeled images with the condition that the points were well within the data frame (between 50 and 450 in the x-axis and y-axis). Using the random points that were generated, we manually observed their behavior over the series of images and decided upon three criteria to keep/discard the points. 
+\begin{itemize}
+    \item how erratic their movement was
+    \item whether they joined or merged with other cells
+    \item whether or not they left the frame
+\end{itemize}
+
+Cells that were too erratic in their movements, merged or split from other cells, or left the frame were removed from our selection. This left us with a final set of cells that were more stable in their movement and did not leave the frame. The annotated selected cells are shown in figure 1. 
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Images/final_points_chosen.png}
+\caption{\label{fig:ChoiceofCells-ControlSeries}The image shows the choice of cells in the \emph{Control Series}}
+\end{figure}
+
+
+\subsection*{Manual Check of the tracing of 5 cells}
+
+We tracked the progress of 15 cells by creating an algorithm that iteratively finds the 15 closest objects/cells from the dataframe of the next image and then updates the objects' locations. This is done sequentially till image 30 and the result is a series of images with labeled cells. Our results are shown in Appendix 1. 
+
+\subsection*{Algorithm to trace the cells}
+To track the movement of the cells, the images must be processed first, to remove the glare and other distortions from the setup. Hence, the first part of the algorithm deals with the processing and labeling of the cells in the image. This allows us to gather further details on the cells, which were essential to tracing the cells. \newline
+Thus the algorithm for image pre-processing and object tracking are shown below. As you can see the image preprocessing includes a range of morphological operations that make the images sharper and clearer, finally resulting in an image where the objects can be labeled. Then dip.MeasurementTools can be used to capture the objects in each image and their features such as location in x (dim0) and location in y (dim1). Since this table can often be very large and confusing to navigate it is advised to use data parsing to convert this string into a dataframe with rows and columns. This allows for much easier manipulation and data wrangling.  \newline
+The algorithm we chose for point selection can be divided into two parts Algorithm 2 and Algorithm 3. Algorithm 2 shows a selection of random points with certain criterion (that they should not be too close to the border). With these initial points selected, we apply Algorithm 2 called closest rows on the initial points. As the function name indicates, closest rows attempts to find the closest rows (in terms of distance) between the initial points selected and the next dataframe (the next image). It does this by initialising a window size and finding objects in this window. If/when no objects are found in this window, the window size is gradually increased until an object is found. When an object is found it now becomes the new \emph{points selected} and i then propagated to the next data frame to find the closest rows to it. 
+The plots we see are visualisations of selected points in each image. 
+
+\begin{algorithm}[h!]
+\caption{Pre-processing Images}\label{cell-trace}
+\begin{algorithmic}[1]
+\Procedure{ImageProcessing}{$\text{images}$}
+    \State $\text{closest\_row[figure]} \gets \text{empty list}$
+    \For{$\text{image}$ \textbf{in} $\text{images}$}
+        \State $gray\_image \gets \text{Grayscale}(image)$
+        \State $image\_contrasted \gets \text{ContrastStretch}(image)$
+        \State $image\_eroded \gets \text{Erosion}(image\_contrasted)$
+        \State $threshold\_image \gets \text{RangeThreshold}(mage\_eroded)$
+        \State $image\_labeled \gets \text{Label}(threshold\_image)$
+        \State Using Measurement.Tools determine the center (in x and y) of objects in each $image\_labeled$
+        \State Parse the measurements into dataframes for each image 
+    \EndFor
+    \For{$\text{dataframe}$ \textbf{in} $\text{dataframes}$}
+        \State $matching\_points \gets \text{center\_of\_gravity}(image) \And \text{center\_of\_gravity}(image+1)$
+        \State $filtered\_matching\_points \gets \text{center\_of\_gravity}(image) \And \text{center\_of\_gravity}(image+1)$
+        \State Superimpose points on images
+    \EndFor
+    \State \textbf{return} Graph of points on images
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[h!]
+\caption{Generate Random Points}\label{generate-random-points}
+\begin{algorithmic}[1]
+\Function{GenerateRandomPoints}{$\text{num\_points}$}
+    \State $selected\_points \gets$ empty list
+    \For{$i$ \textbf{in} $\text{range}(num\_points)$}
+        \State $random\_point \gets [\text{random.uniform}(100, 400), \text{random.uniform}(100, 400)]$
+        \State $selected\_points.\text{append}(random\_point)$
+    \EndFor
+    \State \textbf{return} $selected\_points$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[h!]
+\caption{Finding Closest Rows}\label{find-closest-rows}
+\begin{algorithmic}[1]
+\Function{FindClosestRows}{$df, selected\_points, max\_window\_size$}
+    \State $closest\_rows \gets$ empty list
+    \State $df\_coords \gets df[['dim0', 'dim1']].values$
+    \For{$point$ \textbf{in} $selected\_points$}
+        \State $window\_size \gets 0.5$
+        \State $found\_object \gets$ False
+        \While{$window\_size \leq max\_window\_size$}
+            \State $distances \gets \text{np.sum}((df\_coords - point)^2, \text{axis}=1)$
+            \State $mask \gets distances \leq window\_size^2$
+            \If{$\text{np.any}(mask)$}
+                \State $closest\_row\_index \gets \text{np.argmin}(distances[mask])$
+                \State $closest\_row \gets \text{tuple}(df[mask].iloc[closest\_row\_index][['dim0', 'dim1']])$
+                \State $closest\_rows.\text{append}(closest\_row)$
+                \State $found\_object \gets$ True
+                \State \textbf{break}
+            \EndIf
+            \State $window\_size \gets window\_size + 1$
+        \EndWhile
+        \If{not $found\_object$}
+            \State $closest\_rows.\text{append}(None)$  \Comment{Or any value to indicate no object found}
+        \EndIf
+    \EndFor
+    \State \textbf{return} $closest\_rows$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+\par The processing of the images is first done by converting the image to a grayscale, and then contrast stretching with a lower bound of 0 and an upper bound of 75. The contrast-stretched image was then subjected to erosion. This removed the white noise on the image and highlighted the cells of interest. The image was then, thresholded and labeled. This allowed us to get the measurements of the objects i.e., cells such as center of gravity, size and mean of the objects. 
+\par The measurements were then compiled into a dataframe. The center of gravity of each object allowed us to track the movement in each image, as this served as the x- and y-coordinates for the movement. 
+\subsection*{Application of Algorithm and Results}
+
+\section*{Part 4.2}
+\subsection*{Shape and Texture}
+
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{ |p{1.7cm}|p{1.7cm}|p{1.7cm}|p{1.7cm}|p{1.7cm}|p{1.7cm}|p{1.7cm}| }
+\hline
+\multicolumn{7}{|c|}{\textbf{Cell Features in A Series}} \\
+\hline
+\textbf{Models} & \textbf{Average Area} & \textbf{Perimeter} & \textbf{Roundness} & \textbf{Mean Intensity} & \textbf{Average Standard Deviation} & \textbf{Smoothness} \\
+\hline
+\textbf{Cell 1} & 681.38 & 8548.72 & 128.08 & 23481.72 & 681.38 & 0.99 \\
+\textbf{Cell 2} & 953.28 & 8034.45 & 128.33 & 21312.41 & 953.31 & 0.99 \\
+\textbf{Cell 3} & 965.24 & 7834.79 & 134.13 & 21193.45 & 965.76 & 0.99 \\
+\textbf{Cell 4} & 887.34 & 8161.00 & 117.99 & 21281.72 & 887.34 & 0.99 \\
+\textbf{Cell 5} & 871.72 & 6328.86 & 121.35 & 18226.55 & 872.00 & 0.99 \\
+\textbf{Cell 6} & 1217.69 & 6137.69 & 166.84 & 17727.28 & 1218.03 & 0.99 \\
+\textbf{Cell 7} & 1039.83 & 6217.72 & 143.28 & 17879.31 & 1040.03 & 0.99 \\
+\textbf{Cell 8} & 1039.83 & 6217.72 & 143.28 & 17879.31 & 1040.03 & 0.99 \\
+\textbf{Cell 9} & 2277.59 & 3895.48 & 227.32 & 15520.34 & 2305.00 & 0.99 \\
+\textbf{Cell 10} & 5150.62 & 5740.38 & 485.59 & 17210.34 & 5312.45 & 0.99 \\
+\textbf{Cell 11} & 747.55 & 3208.52 & 110.24 & 14301.38 & 748.83 & 0.99 \\
+\textbf{Cell 12} & 635.62 & 4784.07 & 98.96 & 16984.14 & 635.62 & 0.99 \\
+\textbf{Cell 13} & 750.14 & 5769.72 & 108.39 & 18252.76 & 750.24 & 0.99 \\
+\textbf{Cell 14} & 732.97 & 7609.90 & 106.96 & 20932.76 & 733.03 & 0.99 \\
+\textbf{Cell 15} & 387.24 & 3793.31 & 54.57 & 14664.62 & 387.38 & 0.99\\
+\hline
+\end{tabular}
+\end{table}
+
+
+
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{ |p{1.7cm}|p{1.7cm}|p{1.7cm}|p{1.7cm}|p{1.7cm}|p{1.7cm}|p{1.7cm}| }
+\hline
+\multicolumn{7}{|c|}{\textbf{Cell Features in A Series}} \\
+\hline
+\textbf{Models} & \textbf{Average Area} & \textbf{Perimeter} & \textbf{Roundness} & \textbf{Mean Intensity} & \textbf{Average Standard Deviation} & \textbf{Smoothness} \\
+\hline
+\textbf{Cell 1} & 374.38 & 3103.83 & 128.08 & 13465.03 & 374.38 & 0.99 \\
+\textbf{Cell 2} & 744.45 & 4224.79 & 125.90 & 15578.28 & 744.45 & 0.99 \\
+\textbf{Cell 3} & 479.69 & 3046.28 & 89.84 & 13241.28 & 479.69 & 0.99 \\
+\textbf{Cell 4} & 657.38 & 7416.93 & 110.84 & 18673.10 & 657.38 & 0.99 \\
+\textbf{Cell 5} & 737.14 & 8457.34 & 120.98 & 19833.45 & 737.14 & 0.99 \\
+\textbf{Cell 6} & 792.90 & 6694.55 & 127.98 & 17979.66 & 792.90 & 0.99 \\
+\textbf{Cell 7} & 571.21 & 5840.88 & 100.84 & 17377.52 & 571.21 & 0.99 \\
+\textbf{Cell 8} & 579.03 & 5803.84 & 100.74 & 17474.83 & 579.03 & 0.99 \\
+\textbf{Cell 9} & 758.14 & 7444.23 & 127.70 & 19272.48 & 758.14 & 0.99 \\
+\textbf{Cell 10} & 596.10 & 8074.52 & 106.17 & 20615.90 & 596.10 & 0.99 \\
+\textbf{Cell 11} & 503.21 & 7720.45 & 91.83 & 20281.41 & 503.21 & 0.99 \\
+\textbf{Cell 12} & 540.48 & 6665.48 & 97.17 & 19052.79 & 540.48 & 0.99 \\
+\textbf{Cell 13} & 547.17 & 6202.03 & 95.64 & 18167.28 & 547.17 & 0.99 \\
+\textbf{Cell 14} & 678.14 & 5711.48 & 113.63 & 17195.24 & 678.14 & 0.99 \\
+\textbf{Cell 15} & 569.52 & 7338.17 & 89.87 & 20958.62 & 569.52 & 0.99 \\
+
+\hline
+\end{tabular}
+\end{table}
+
+
+
+
+
+
+
+\subsection*{Cell Velocity and Distance Trajectory}
+
+\begin{landscape} % Begin the landscape environment
+\begin{table}[htbp]
+\centering
+\caption{Velocity Changes for Cells in Series A }
+\label{tab:velocity_changes}
+\begin{tabular}{cccccccccccccccc}
+\toprule
+ & \textbf{Cell 1} & \textbf{Cell 2} & \textbf{Cell 3} & \textbf{Cell 4} & \textbf{Cell 5} & \textbf{Cell 6} & \textbf{Cell 7} & \textbf{Cell 8} & \textbf{Cell 9} & \textbf{Cell 10} & \textbf{Cell 11} & \textbf{Cell 12} & \textbf{Cell 13} & \textbf{Cell 14} & \textbf{Cell 15} \\
+\midrule
+0 & 0.08021 & 0.10276 & 0.01592 & 0.43676 & 0.06171 & 0.0841 & 0.49349 & 0.08270 & 0.00671 & 0.141880 & 0.25131 & 0.32825 & 0.03552 & 0.02522 & 0.05497 \\
+1 & 0.159114 & 0.105119 & 0.036610 & 0.188968 & 0.036305 & 0.059658 & 0.105119 & 0.117169 & 0.019783 & 0.024583 & 0.134766 & 0.051317 & 0.025906 & 0.110946 & 0.075517 \\
+2 & 0.047177 & 0.045100 & 0.229983 & 0.154169 & 0.160939 & 0.076739 & 0.045100 & 0.106122 & 0.286677 & 0.008945 & 0.334716 & 0.002014 & 0.132922 & 0.060006 & 0.027739 \\
+3 & 0.023467 & 0.038451 & 0.148045 & 0.305619 & 0.094667 & 0.146128 & 0.038451 & 0.011577 & 0.027816 & 0.040036 & 0.023049 & 0.071876 & 0.021727 & 0.039060 & 0.019454 \\
+4 & 0.061942 & 0.015092 & 0.135775 & 0.354317 & 0.121977 & 0.073305 & 0.015092 & 0.128455 & 0.046562 & 0.178612 & 0.023109 & 0.117394 & 0.108849 & 0.090247 & 0.023348 \\
+5 & 0.601371 & 0.294893 & 0.039520 & 0.151373 & 0.036180 & 0.266136 & 0.294893 & 0.133305 & 0.060760 & 0.070914 & 0.032500 & 0.027917 & 0.033476 & 0.016415 & 0.020138 \\
+6 & 0.050895 & 0.147998 & 0.050895 & 0.303124 & 0.147998 & 0.311988 & 0.147998 & 0.110114 & 0.160901 & 0.018774 & 0.017180 & 0.012250 & 0.002242 & 0.057524 & 0.035158 \\
+7 & 0.009317 & 0.087627 & 0.009317 & 0.281656 & 0.087627 & 0.033706 & 0.087627 & 0.253860 & 0.186732 & 0.070353 & 0.039835 & 0.012540 & 0.043681 & 0.116267 & 0.008375 \\
+8 & 0.011211 & 0.307762 & 0.011211 & 0.292593 & 0.307762 & 0.077692 & 0.307762 & 0.116264 & 0.258416 & 0.102181 & 0.137179 & 0.009025 & 0.030014 & 0.023600 & 0.018276 \\
+9 & 0.041800 & 0.103054 & 0.041800 & 0.108934 & 0.103054 & 0.050449 & 0.103054 & 0.083687 & 0.265715 & 0.108565 & 0.026926 & 0.016697 & 0.094993 & 0.122602 & 0.014240  \\
+10 & 0.048591 & 0.201634 & 0.048591 & 0.068500 & 0.201634 & 0.059424 & 0.201634 & 0.086023 & 0.200996 & 0.063958 & 0.015023 & 0.006449 & 0.008201 & 0.033840 & 0.185953 \\
+11 & 0.024523 & 0.154527 & 0.024523 & 0.151455 & 0.154527 & 0.029155 & 0.154527 & 0.182407 & 0.120452 & 0.060933 & 0.012720 & 0.034133 & 0.017564 & 0.032500 & 0.016180 \\
+12 & 0.039176 & 0.009718 & 0.039176 & 0.169078 & 0.009718 & 0.065261 & 0.009718 & 0.067582 & 0.110731 & 0.104996 & 0.018276 & 0.017437 & 0.034390 & 0.049568 & 0.041800 \\
+13 & 0.017520 & 0.024296 & 0.017520 & 0.075558 & 0.024296 & 0.330085 & 0.024296 & 0.035988 & 0.103554 & 0.220728 & 0.227854 & 0.181917 & 0.045037 & 0.074629 & 0.024224 \\
+14 & 0.061198 & 0.077750 & 0.061198 & 0.034359 & 0.077750 & 0.064253 & 0.077750 & 0.050069 & 0.140287 & 0.010442 & 0.034811 & 0.224298 & 0.029184 & 0.085898 & 0.054115 \\
+15 & 0.054212 & 0.039060 & 0.054212 & 0.154065 & 0.039060 & 0.055403 & 0.039060 & 0.103306 & 0.017579 & 0.005006 & 0.015442 & 0.038373 & 0.027501 & 0.038006 & 0.023169 \\
+16 & 0.019454 & 0.035629 & 0.019454 & 0.183032 & 0.035629 & 0.053359 & 0.035629 & 0.007862 & 0.047704 & 0.038243 & 0.021751 & 0.506767 & 0.023536 & 0.047755 & 0.003727 \\
+17 & 0.032745 & 0.014191 & 0.032745 & 0.028549 & 0.014191 & 0.035532 & 0.014191 & 0.008498 & 0.118442 & 0.039370 & 0.012856 & 0.176196 & 0.069690 & 0.096756 & 0.168630 \\
+18 & 0.017180 & 0.025847 & 0.017180 & 0.341619 & 0.025847 & 0.037128 & 0.025847 & 0.022016 & 0.023482 & 0.038747 & 0.038624 & 0.302705 & 0.037168 & 0.032882 & 0.070603 \\
+19 & 0.014191 & 0.007546 & 0.014191 & 0.336763 & 0.007546 & 0.043269 & 0.007546 & 0.006067 & 0.028443 & 0.047000 & 0.002333 & 0.039247 & 0.027536 & 0.075462 & 0.070045 \\
+20 & 0.028443 & 0.007120 & 0.028443 & 0.150723 & 0.007120 & 0.024267 & 0.007120 & 0.016541 & 0.025833 & 0.020753 & 0.058667 & 0.029003 & 0.012826 & 0.031667 & 0.036075 \\
+21 & 0.029814 & 0.003005 & 0.029814 & 0.046308 & 0.003005 & 0.013359 & 0.003005 & 0.014191 & 0.052770 & 0.032170 & 0.027131 & 0.048514 & 0.051324 & 0.038234 & 0.032670 \\
+22 & 0.220588 & 0.035375 & 0.220588 & 0.432888 & 0.035375 & 0.021635 & 0.035375 & 0.011932 & 0.030299 & 0.130580 & 0.014743 & 0.205718 & 0.029230 & 0.039176 & 0.041248 \\
+23 & 0.169738 & 0.031732 & 0.169738 & 0.085521 & 0.031732 & 0.042246 & 0.031732 & 0.004859 & 0.026034 & 0.169738 & 0.021425 & 0.006560 & 0.056561 & 0.049951 & 0.003333 \\
+24 & 0.021108 & 0.018856 & 0.021108 & 0.030845 & 0.018856 & 0.034258 & 0.018856 & 0.025833 & 0.017815 & 0.021108 & 0.039176 & 0.010926 & 0.012352 & 0.022761 & 0.051167 \\
+25 & 0.041767 & 0.077518 & 0.041767 & 0.022189 & 0.077518 & 0.066233 & 0.077518 & 0.025014 & 0.043365 & 0.041767 & 0.025739 & 0.039251 & 0.058149 & 0.025563 & 0.011785 \\
+26 & 0.020522 & 0.026680 & 0.020522 & 0.033302 & 0.026680 & 0.045682 & 0.026680 & 0.023585 & 0.018352 & 0.020522 & 0.011932 & 0.010369 & 0.028599 & 0.041742 & 0.050367 \\
+27 & 0.014945 & 0.030196 & 0.014945 & 0.044845 & 0.030196 & 0.062054 & 0.030196 & 0.013176 & 0.013794 & 0.014945 & 0.019437 & 0.051507 & 0.014583 & 0.031940 & 0.010308 \\
+28 & 0.020646 & 0.040629 & 0.020646 & 0.012528 & 0.040629 & 0.031325 & 0.040629 & 0.010865 & 0.120750 & 0.020646 & 0.010442 & 0.025456 & 0.045621 & 0.024167 & 0.024224 \\
+\texxtbf{Average} & 0.068 & 0.0727
+
+\end{tabular}
+\end{table}
+\end{landscape} % End the landscape environment}
+
+\begin{landscape}
+\begin{table}[htbp]
+\centering
+\caption{Velocity Changes for Cells in Series B }
+\begin{tabular}{rrrrrrrrrrrrrrr}
+\toprule
+Cell 1 & Cell 2 & Cell 3 & Cell 4 & Cell 5 & Cell 6 & Cell 7 & Cell 8 & Cell 9 & Cell 10 & Cell 11 & Cell 12 & Cell 13 & Cell 14 & Cell 15 \\
+\midrule
+0.042704 & 0.135324 & 0.123615 & 0.063355 & 0.118336 & 0.100671 & 0.031678 & 0.103320 & 0.068333 & 0.205818 & 0.065474 & 0.133200 & 0.120868 & 0.132112 & 0.139207 \\
+0.078120 & 0.108141 & 0.044033 & 0.129349 & 0.216131 & 0.095510 & 0.136056 & 0.030026 & 0.038415 & 0.013566 & 0.023046 & 0.048088 & 0.114906 & 0.104037 & 0.236069 \\
+0.128033 & 0.128625 & 0.113382 & 0.071841 & 0.107707 & 0.018276 & 0.043605 & 0.011963 & 0.044799 & 0.140633 & 0.086610 & 0.067910 & 0.158684 & 0.107707 & 0.208041 \\
+0.125858 & 0.072275 & 0.047973 & 0.044386 & 0.103528 & 0.015023 & 0.195334 & 0.159654 & 0.022638 & 0.158327 & 0.053033 & 0.225039 & 0.256500 & 0.103528 & 0.096336 \\
+0.084623 & 0.179973 & 0.115980 & 0.173945 & 0.146368 & 0.116812 & 0.066165 & 0.102034 & 0.088416 & 0.066999 & 0.053924 & 0.131183 & 0.066165 & 0.146368 & 0.032425 \\
+0.172079 & 0.162944 & 0.129384 & 0.030833 & 0.151667 & 0.122842 & 0.039229 & 0.033924 & 0.121635 & 0.151667 & 0.099775 & 0.184174 & 0.039229 & 0.151667 & 0.050173 \\
+0.233357 & 0.108449 & 0.177279 & 0.094612 & 0.163728 & 0.030935 & 0.223689 & 0.037006 & 0.129770 & 0.163728 & 0.056457 & 0.149815 & 0.223689 & 0.163728 & 0.127837 \\
+0.169863 & 0.164581 & 0.131891 & 0.130067 & 0.219888 & 0.103615 & 0.058178 & 0.123475 & 0.036334 & 0.219888 & 0.070244 & 0.189145 & 0.058178 & 0.219888 & 0.156687 \\
+0.115302 & 0.250547 & 0.009014 & 0.009014 & 0.178252 & 0.049018 & 0.130035 & 0.054804 & 0.020883 & 0.178252 & 0.025310 & 0.153971 & 0.130035 & 0.178252 & 0.139893 \\
+0.057039 & 0.167856 & 0.183863 & 0.183863 & 0.118051 & 0.151969 & 0.268984 & 0.141276 & 0.117100 & 0.118051 & 0.135887 & 0.199280 & 0.268984 & 0.118051 & 0.118051 \\
+0.053781 & 0.057185 & 0.136667 & 0.136667 & 0.179184 & 0.108753 & 0.149159 & 0.022784 & 0.122011 & 0.179184 & 0.021874 & 0.085216 & 0.149159 & 0.179184 & 0.179184 \\
+0.099177 & 0.120937 & 0.137032 & 0.137032 & 0.126765 & 0.036173 & 0.190049 & 0.225309 & 0.152746 & 0.126765 & 0.064393 & 0.142132 & 0.190049 & 0.126765 & 0.126765 \\
+0.143299 & 0.153824 & 0.173512 & 0.173512 & 0.166009 & 0.229109 & 0.042114 & 0.123624 & 0.066797 & 0.166009 & 0.010934 & 0.080506 & 0.042114 & 0.166009 & 0.166009 \\
+0.095281 & 0.054823 & 0.159865 & 0.159865 & 0.076748 & 0.148948 & 0.119240 & 0.091249 & 0.090925 & 0.076748 & 0.113260 & 0.066510 & 0.119240 & 0.076748 & 0.076748 \\
+0.133380 & 0.081326 & 0.177680 & 0.177680 & 0.093244 & 0.032869 & 0.184599 & 0.076173 & 0.065245 & 0.093244 & 0.086800 & 0.177077 & 0.184599 & 0.093244 & 0.093244 \\
+0.150289 & 0.164507 & 0.111943 & 0.111943 & 0.044292 & 0.209333 & 0.093426 & 0.055924 & 0.180693 & 0.044292 & 0.016767 & 0.107716 & 0.093426 & 0.044292 & 0.044292 \\
+0.144458 & 0.271725 & 0.132238 & 0.132238 & 0.050532 & 0.112305 & 0.125347 & 0.334265 & 0.207261 & 0.050532 & 0.006960 & 0.218104 & 0.125347 & 0.050532 & 0.050532 \\
+0.078338 & 0.094707 & 0.258597 & 0.258597 & 0.078462 & 0.221135 & 0.089334 & 0.093188 & 0.121037 & 0.078462 & 0.040646 & 0.168426 & 0.089334 & 0.078462 & 0.078462 \\
+0.182003 & 0.199654 & 0.146936 & 0.146936 & 0.061129 & 0.178577 & 0.127088 & 0.123890 & 0.204138 & 0.061129 & 0.041474 & 0.193139 & 0.127088 & 0.061129 & 0.061129 \\
+0.158616 & 0.172556 & 0.120257 & 0.120257 & 0.200693 & 0.237139 & 0.093634 & 0.172400 & 0.126768 & 0.200693 & 0.008043 & 0.198046 & 0.093634 & 0.200693 & 0.200693 \\
+0.253904 & 0.098407 & 0.104193 & 0.104193 & 0.126834 & 0.209364 & 0.163233 & 0.118185 & 0.159313 & 0.126834 & 0.011769 & 0.131930 & 0.163233 & 0.126834 & 0.126834 \\
+0.205935 & 0.107245 & 0.179668 & 0.179668 & 0.071889 & 0.122046 & 0.064560 & 0.188146 & 0.101414 & 0.071889 & 0.004083 & 0.108985 & 0.064560 & 0.071889 & 0.071889 \\
+0.138644 & 0.102909 & 0.218488 & 0.218488 & 0.156269 & 0.102147 & 0.038042 & 0.186863 & 0.023717 & 0.156269 & 0.005918 & 0.204015 & 0.038042 & 0.156269 & 0.156269 \\
+0.063792 & 0.152612 & 0.164739 & 0.164739 & 0.089540 & 0.121912 & 0.063667 & 0.137773 & 0.174901 & 0.089540 & 0.022621 & 0.239584 & 0.063667 & 0.089540 & 0.089540 \\
+0.056746 & 0.208073 & 0.183335 & 0.183335 & 0.024224 & 0.122602 & 0.057215 & 0.092312 & 0.183371 & 0.024224 & 0.005025 & 0.065192 & 0.057215 & 0.024224 & 0.024224 \\
+0.076126 & 0.113444 & 0.099107 & 0.099107 & 0.051908 & 0.116157 & 0.122783 & 0.114676 & 0.045856 & 0.051908 & 0.008069 & 0.116696 & 0.122783 & 0.051908 & 0.051908 \\
+0.230663 & 0.101242 & 0.132062 & 0.132062 & 0.058310 & 0.036000 & 0.130948 & 0.087623 & 0.232215 & 0.058310 & 0.002083 & 0.289696 & 0.130948 & 0.058310 & 0.058310 \\
+0.161342 & 0.157852 & 0.187620 & 0.187620 & 0.045590 & 0.074740 & 0.068903 & 0.064637 & 0.159663 & 0.045590 & 0.005233 & 0.134536 & 0.068903 & 0.045590 & 0.045590 \\
+0.139396 & 0.235391 & 0.215526 & 0.215526 & 0.022669 & 0.505636 & 0.124981 & 0.154290 & 0.173159 & 0.022669 & 0.011574 & 0.028382 & 0.124981 & 0.022669 & 0.022669 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{landscape}
+
+\subsection*{Differences in Trajectory}
+\subsection*{Differences in Conditions}
+\subsection*{Correlation between speed with shape and texture}
+\section*{Appendix 1}
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b1.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b2.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b3.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b4.png}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b9.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b10.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b11.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b12.png}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b13.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b14.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b15.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b16.png}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b17.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b18.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b19.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b20.png}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b21.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b22.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b23.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b24.png}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Report/RImages/Traces_Growth/trace-b25.png}
+        \caption{}
+    \end{subfigure}%
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Report/RImages/Traces_Growth/trace-b26.png}
+        \caption{}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Report/RImages/Traces_Growth/trace-b27.png}
+        \caption{}
+    \end{subfigure}%
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Report/RImages/Traces_Growth/trace-b28.png}
+        \caption{}
+    \end{subfigure}
+    \caption{The image shows the choice of cells in the \emph{Control Series}}
+    \label{fig:ChoiceofCells-ControlSeries}
+\end{figure}
+
+\newpage
+\section*{Appendix 2}
+
+
+\bibliographystyle{alpha}
+\bibliography{sample}
+
+\end{document}
