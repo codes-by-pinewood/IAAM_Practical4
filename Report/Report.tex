@@ -125,10 +125,11 @@ The plots we see are visualisations of selected points in each image.
 
 \section*{Part 4.2}
 \subsection*{Shape and Texture}
-
+In order to calculate shape and texture it is important to capture image features like size, perimeter, roundness, standard deviation, smoothness and uniformity. This is all a simple operation in the diplib library. The average of these features for each cell in Series A (Control series) and Series B (Growth Series) is shown in table 1 and 2.
 
 \begin{table}[h!]
 \centering
+\caption{Summary of Cell Features in A Series}
 \begin{tabular}{|p{1.2cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.7cm}|p{1.5cm}|p{1.7cm}|p{1.5cm}|p{1.7cm}|}
 \hline
 \multicolumn{9}{|c|}{\textbf{Cell Features in A Series}} \\
@@ -158,6 +159,7 @@ The plots we see are visualisations of selected points in each image.
 
 \begin{table}[h!]
 \centering
+\caption{Summary of Cell Features in B Series}
 \begin{tabular}{ |p{1.2cm}|p{1.5cm}|p{1.5cm}|p{1.7cm}|p{1.7cm}|p{1.7cm}|p{1.7cm}|p{1.7cm}|p{1.7cm}|p{1.7cm}| }
 \hline
 \multicolumn{9}{|c|}{\textbf{Cell Features in B Series}} \\
@@ -191,6 +193,22 @@ The plots we see are visualisations of selected points in each image.
 
 
 \subsection*{Cell Velocity and Distance Trajectory}
+
+The differences in cell velocity and distance trajectory can be seen in the graphs in figures and . 
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Report/RImages/Graphs/mean_distance_g_and_c.png}
+\caption{\label{fig:ChoiceofCells-ControlSeries}The image shows the progression of average distance travelled by each cell in series C and G.}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Report/RImages/Graphs/mean_velocity_g_and_c.png}
+\caption{\label{fig:ChoiceofCells-ControlSeries}The image shows the average velocity of each cell in series C and G.}
+\end{figure}
+
 
 \begin{landscape} % Begin the landscape environment
 \begin{table}[htbp]
@@ -292,50 +310,50 @@ Average & 0.1301 & 0.1423 & 0.1419 & 0.1369 & 0.1119 & 0.1286 & 0.1117 & 0.1124 
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/trace_1a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_1a.png}
 \includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_2a.png}
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/trace-3a.png}
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/trace-4a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_3a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_4a.png}
 \end{figure}
 
 \clearpage
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace_5a.png}
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace_6a.png}
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace_7a.png}
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace_8a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_5a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_6a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_7a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_8a.png}
 \end{figure}
 
 \clearpage
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace_9a.png}
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace_10a.png}
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace_11a.png}
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace_12a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_9a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_10a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_11a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_12a.png}
 \end{figure}
 
 \clearpage
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace_13a.png}
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace_14a.png}
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace_15a.png}
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace_16a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_13a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_14a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_15a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_16a.png}
 \end{figure}
 
 \clearpage
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace_17a.png}
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace_18a.png}
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace_19a.png}
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace_20a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_17a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_18a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_19a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_20a.png}
 \end{figure}
 
 \clearpage
@@ -343,17 +361,27 @@ Average & 0.1301 & 0.1423 & 0.1419 & 0.1369 & 0.1119 & 0.1286 & 0.1117 & 0.1124 
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace_21a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_21a.png}
 \includegraphics[width=0.75\linewidth]
-{Report/RImages/Traces_Growth/trace-b26.png}
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b27.png}
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b28.png}
+{Report/RImages/Traces_Control/image_22a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_23a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_24a.png}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_25a.png}
+\includegraphics[width=0.75\linewidth]
+{Report/RImages/Traces_Control/image_26a.png}
+\includegraphics[width=0.75\linewidth]
+{Report/RImages/Traces_Control/image_27a.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_28a.png}
 \end{figure}
 
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Growth/trace-b29.png}
+\includegraphics[width=0.75\linewidth]{Report/RImages/Traces_Control/image_29a.png}
 \end{figure}
 
 
@@ -433,29 +461,103 @@ Average & 0.1301 & 0.1423 & 0.1419 & 0.1369 & 0.1119 & 0.1286 & 0.1117 & 0.1124 
     \centering
     \begin{subfigure}[b]{0.5\linewidth}
         \centering
-        \includegraphics[width=\linewidth]{Report/RImages/Traces_Growth/trace-b25.png}
+        \includegraphics[width=\linewidth]{Report/Appendix_Images/Trajectory-A-Control/trajectory_1.png}
         \caption{}
     \end{subfigure}%
     \begin{subfigure}[b]{0.5\linewidth}
         \centering
-        \includegraphics[width=\linewidth]{Report/RImages/Traces_Growth/trace-b26.png}
+        \includegraphics[width=\linewidth]{Report/Appendix_Images/Trajectory-A-Control/trajectory_2.png}
         \caption{}
     \end{subfigure}
     \begin{subfigure}[b]{0.5\linewidth}
         \centering
-        \includegraphics[width=\linewidth]{Report/RImages/Traces_Growth/trace-b27.png}
+        \includegraphics[width=\linewidth]{Report/Appendix_Images/Trajectory-A-Control/trajectory_3.png}
         \caption{}
     \end{subfigure}%
     \begin{subfigure}[b]{0.5\linewidth}
         \centering
-        \includegraphics[width=\linewidth]{Report/RImages/Traces_Growth/trace-b28.png}
+        \includegraphics[width=\linewidth]{Report/Appendix_Images/Trajectory-A-Control/trajectory_4.png}
         \caption{}
     \end{subfigure}
-    \caption{The image shows the choice of cells in the \emph{Control Series}}
+    \caption{The image shows the trajectory of cells 1 to 4 over 30 frames in Series A}
     \label{fig:ChoiceofCells-ControlSeries}
 \end{figure}
 
+\clearpage
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Report/Appendix_Images/Trajectory-A-Control/trajectory_5.png}
+        \caption{}
+    \end{subfigure}%
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Report/Appendix_Images/Trajectory-A-Control/trajectory_6.png}
+        \caption{}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Report/Appendix_Images/Trajectory-A-Control/trajectory_7.png}
+        \caption{}
+    \end{subfigure}%
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Report/Appendix_Images/Trajectory-A-Control/trajectory_8.png}
+        \caption{}
+    \end{subfigure}
+    \caption{The image shows the trajectory of cells 5 to 8 over 30 frames in Series A}
+    \label{fig:ChoiceofCells-ControlSeries}
+\end{figure}
 
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Report/Appendix_Images/Trajectory-A-Control/trajectory_9.png}
+        \caption{}
+    \end{subfigure}%
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Report/Appendix_Images/Trajectory-A-Control/trajectory_10.png}
+        \caption{}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Report/Appendix_Images/Trajectory-A-Control/trajectory_11.png}
+        \caption{}
+    \end{subfigure}%
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Report/Appendix_Images/Trajectory-A-Control/trajectory_12.png}
+        \caption{}
+    \end{subfigure}
+    \caption{The image shows the trajectory of cells 9 to 12 over 30 frames in Series A}
+    \label{fig:ChoiceofCells-ControlSeries}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Report/Appendix_Images/Trajectory-A-Control/trajectory_13.png}
+        \caption{}
+    \end{subfigure}%
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Report/Appendix_Images/Trajectory-A-Control/trajectory_14.png}
+        \caption{}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Report/Appendix_Images/Trajectory-A-Control/trajectory_15.png}
+        \caption{}
+    \end{subfigure}
+    \caption{The image shows the trajectory of cells 13 to 15 over 30 frames in Series A}
+    \label{fig:ChoiceofCells-ControlSeries}
+\end{figure}
 
 
 \bibliographystyle{alpha}
