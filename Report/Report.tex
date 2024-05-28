@@ -21,7 +21,7 @@
 \begin{document}
 \maketitle
 
-\section*{Question 4.1}
+\section*{Part 4.1}
 \subsection*{Choice of Cells}
 \par To pick a set of cells, pre-processing images to detect finer objects better is important. For that we first made the image single-channel by averaging the intensity values over all channels and creating a new gray-scale image. Then we applied morphological operations such as contrast stretching to remove underexposure areas and more accurately highlight the cells. Then we implemented a morphological opening to erode the objects(or foreground) and subsequently dilate them. This was done so that clusters of connected objects could be separated into separate distinct objects (separate cells) for better identification but not so much that smaller objects completely disappear. Then, range thresholding was used to allow emphasis on areas of images with higher intensities (or cells). Lastly, labeling was used to give connected objects a unified symbol for better identification. Through this iterative procedure, we procured a series of images that were ready for image analysis.\newline 
 
@@ -132,7 +132,8 @@ The plots we see are visualisations of selected points in each image.
 \par The processing of the images is first done by converting the image to a grayscale, and then contrast stretching with a lower bound of 0 and an upper bound of 75. The contrast-stretched image was then subjected to erosion. This removed the white noise on the image and highlighted the cells of interest. The image was then, thresholded and labeled. This allowed us to get the measurements of the objects i.e., cells such as center of gravity, size and mean of the objects. 
 \par The measurements were then compiled into a dataframe. The center of gravity of each object allowed us to track the movement in each image, as this served as the x- and y-coordinates for the movement. 
 \subsection*{Application of Algorithm and Results}
-
+The algorithms were applied successfully, and the results are tabulated in further sections. The images gathered from each trace have been attached to the Appendix. 
+\newpage
 \section*{Part 4.2}
 \subsection*{Shape and Texture}
 In order to calculate shape and texture it is important to capture image features like size, perimeter, roundness, standard deviation, smoothness and uniformity. This is all a simple operation in the diplib library. The average of these features for each cell in Series A (Control series) and Series B (Growth Series) is shown in table \ref{table:SummaryCellFeatures-SeriesA} and \ref{table:SummaryCellFeatures-SeriesB}.
@@ -238,14 +239,14 @@ Since the cells chosen were spread throughout the image, the ROI would be the en
 \textbf{Frame 30} & 5.44E-12 & 1.07E-11\\
  \hline
     \end{tabular}
-    \caption{Caption}
-    \label{tab:my_label}
+    \caption{Uniformity of the Series}
+    \label{tab:Uniformity_Series}
 \end{table}
 
+As seen above, the uniformity of the control series is lower than that of growth series. Due to the movement of the cells throughout the frame, the texture is more, thus resulting in a low uniformity. 
 
 \begin{table}[h!]
 \centering
-\caption{Uniformity of the Image}\label{table:Uniformity}
 \begin{tabular}{|p{1.2cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.7cm}|p{1.5cm}|p{1.7cm}|p{1.5cm}|p{1.7cm}|}
 \hline
 \multicolumn{9}{|c|}{\textbf{Cell Features in A Series}} \\
@@ -269,13 +270,14 @@ Since the cells chosen were spread throughout the image, the ROI would be the en
 \textbf{Cell 15} & 387.24 & 3793.31 & 54.57 & 14664.62 & 387.38 & 0.99 & 0.0419 & 5.035 \\
 \hline
 \end{tabular}
+\caption{Uniformity of the Image}\label{table:Uniformity}
 \end{table}
 
-
+\clearpage
 
 \subsection*{Cell Velocity and Distance Trajectory}
 
-The differences in cell velocity and distance trajectory can be seen in the graphs in figures 2 and 3. From the graphs it is visible that average distance and average velocity is more stochastic in the growth series than in the control series. 
+The differences in cell velocity and distance trajectory can be seen in the graphs in figures 2 and 3. From the graphs it is visible that average distance and average velocity is more stochastic in the growth series than in the control series. This shows that cells in the growth series tend to be more active, erratic and spontaneous in their movements than cells in the control series. 
 
 
 \begin{figure}[h!]
@@ -289,6 +291,7 @@ The differences in cell velocity and distance trajectory can be seen in the grap
 \includegraphics[width=0.75\linewidth]{Report/RImages/Graphs/mean_velocity_g_and_c.png}
 \caption{\label{fig:Mean_Velocity}The image shows the average velocity of each cell in series C and G.}
 \end{figure}
+
 
 
 \begin{landscape} % Begin the landscape environment
@@ -329,7 +332,7 @@ The differences in cell velocity and distance trajectory can be seen in the grap
 26 & 0.02052 & 0.02668 & 0.02052 & 0.03330 & 0.02668 & 0.04568 & 0.02668 & 0.02359 & 0.01835 & 0.02052 & 0.01193 & 0.01037 & 0.02860 & 0.04174 & 0.05037 \\
 27 & 0.01495 & 0.03020 & 0.01495 & 0.04485 & 0.03020 & 0.06205 & 0.03020 & 0.01318 & 0.01379 & 0.01495 & 0.01944 & 0.05151 & 0.01458 & 0.03194 & 0.01031 \\
 28 & 0.02065 & 0.04063 & 0.02065 & 0.01253 & 0.04063 & 0.03133 & 0.04063 & 0.01087 & 0.12075 & 0.02065 & 0.01044 & 0.02546 & 0.04562 & 0.02417 & 0.02422 \\
-\texxtbf{Average} & 0.0684 & 0.0727 & 0.0557 & 0.1717 & 0.0696 & 0.0791 & 0.0862 & 0.0641 & 0.0889 & 0.0644 & 0.0568 & 0.0898 & 0.0399 & 0.0529 & 0.0419
+\textbf{Average} & 0.0684 & 0.0727 & 0.0557 & 0.1717 & 0.0696 & 0.0791 & 0.0862 & 0.0641 & 0.0889 & 0.0644 & 0.0568 & 0.0898 & 0.0399 & 0.0529 & 0.0419\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -382,10 +385,195 @@ Average & 0.1301 & 0.1423 & 0.1419 & 0.1369 & 0.1119 & 0.1286 & 0.1117 & 0.1124 
 \end{landscape}
 
 \subsection*{Differences in Trajectory}
+The trajectories of the cells in both series were plotted and the figures are attached in the Appendix (figures \ref{fig:Trajectory-ControlSeries-1-4}, \ref{fig:Trajectory-ControlSeries-5-8}, \ref{fig:Trajectory-ControlSeries-9-12} and \ref{fig:Trajectory-ControlSeries-13-15})
+
+The difference in trajectories of the Control Series are tabulated below. 
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ |p{3cm}||p{3cm}|p{3cm}|  }
+     \hline Frames & Differences in x-direction & Difference in y-direction\\
+ \hline 
+$1 \rightarrow 2$ &170.1 & 3.80000000000001\\
+$2 \rightarrow 3$ &241.1 & 31.4\\
+$3 \rightarrow 4$ &201.4 & 143.4\\
+$4 \rightarrow 5$ &1218.3 & 1117.9\\
+$5 \rightarrow 6$ &1147.6 & 1060.4\\
+$6 \rightarrow 7$ &1378.1 & 1383.9\\
+$7 \rightarrow 8$ &4818.9 & 356.600000000003\\
+$8 \rightarrow 9$ &6133.92 & 1061.91\\
+$9 \rightarrow 10$ &1007.82 & 2476.74\\
+$10 \rightarrow 11$ &1898.29999999999 & 356.130000000001\\
+$11 \rightarrow 12$ &354.049999999999 & 421.600000000003\\
+$12 \rightarrow 13$ &246.550000000002 & 95.4300000000021\\
+$13 \rightarrow 14$ &753.199999999998 & 975.970000000004\\
+ \hline
+    \end{tabular}
+    \caption{Uniformity of the Series}
+    \label{tab:Uniformity_Series}
+\end{table}
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ |p{3cm}||p{3cm}|p{3cm}|  }
+     \hline Frames & Differences in x-direction & Difference in y-direction\\
+ \hline 
+$1 \rightarrow 2$ &16.5999999999999 & 55.6999999999999\\
+$2 \rightarrow 3$ &83.1 & 87.6999999999999\\
+$3 \rightarrow 4$ &38.1 & 32\\
+$4 \rightarrow 5$ &94.5999999999999 & 70.5\\
+$5 \rightarrow 6$ &165 & 247.7\\
+$6 \rightarrow 7$ &257.6 & 133.6\\
+$7 \rightarrow 8$ &244.6 & 229.66\\
+$8 \rightarrow 9$ &42.3999999999999 & 152.56\\
+$9 \rightarrow 10$ &246.799999999999 & 157.899999999999\\
+$10 \rightarrow 11$ &111.86 & 131.2\\
+$11 \rightarrow 12$ &227.859999999999 & 23.6999999999999\\
+$12 \rightarrow 13$ &181.7 & 206.799999999999\\
+$13 \rightarrow 14$ &18.4999999999999 & 99.9999999999999\\
+\hline
+    \end{tabular}
+    \caption{Uniformity of the Series}
+    \label{tab:Uniformity_Series}
+\end{table}
+
+\newpage
 \subsection*{Differences in Conditions}
+From the figures 5 to 8 we can see that apart from some stochastic randomness in cells 9 and 10 in the control series, the difference in in average roundness, smoothness and average standard deviation are slight. However, differences between the control and growth series are more prominent in terms of average intensity and average perimeter of cells. It is clear from the graphs that differences in mean intensity, area and periemter are much more stark with cells in the growth series having a rising trend of mean intensity and perimeter and cells in the control series having falling trends in these features. 
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Report/RImages/Graphs/average_mean_1.png}
+\caption{\label{fig:Mean_Distance}The image shows the progression of average mean intensity of each cell in series C and G.}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Report/RImages/Graphs/average_area.png}
+\caption{\label{fig:Mean_Distance}The image shows the progression of average mean intensity of each cell in series C and G.}
+\end{figure}
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Report/RImages/Graphs/average_perimeter_1.png}
+\caption{\label{fig:Mean_Distance}The image shows the progression of average perimeter of each cell in series C and G.}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Report/RImages/Graphs/average_roundness_1.png}
+\caption{\label{fig:Mean_Distance}The image shows the progression of average roundness of each cell in series C and G.}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Report/RImages/Graphs/average_smoothness_1.png}
+\caption{\label{fig:Mean_Distance}The image shows the progression of average smoothness of each cell in series C and G.}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Report/RImages/Graphs/average_standard_deviation.png}
+\caption{\label{fig:Mean_Distance}The image shows the progression of average standard deviation of each cell in series C and G.}
+\end{figure}
+\clearpage
+
 \subsection*{Correlation between speed with shape and texture}
+
+As seen in the figures 11 and 12 the relationship between speed and size of cells is generally inverse, a bigger cell often moves slower. It is important to note however that this relationship is derived from the curve and in real life there are exceptions. We can see this with points that deviate far from the fitted line for which bigger size doesnt necessarily equal lower velocity. However, it is safe to say that in general size has an effect on velocity of cells. 
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Report/RImages/Graphs/relationship_c.png}
+\caption{\label{fig:Mean_Distance}The image shows the relationship between average area of cells and average velocities for series C (control series).}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Report/RImages/Graphs/relationship_g.png}
+\caption{\label{fig:Mean_Distance}The image shows the relationship between average area of cells and average velocities for series G (growth series).}
+\end{figure}
+\clearpage
 \newpage
 
+Looking at figures 13 and 14, it is clear that there is a correlation between roundness and velocity. As seen in the figures, for both the control and growth series, a higher average roundness of cells corresponds to lower average velocity. This may be because a rounder shape indicates more resistance experienced by the cell when moving through fluid environments from other micro-organisms and less ability to push through smaller areas. For instance, cells with a more elongated shape might experience less resistance in comparison to rounder cells as they move through fluid environments.
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Report/RImages/Graphs/relation_c.png}
+\caption{\label{fig:Mean_Distance}The image shows the relationship between average roundness of cells and average velocities for series C (control series).}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Report/RImages/Graphs/relation_g.png}
+\caption{\label{fig:Mean_Distance}The image shows the relationship between average roundness of cells and average velocities for series G (growth series).}
+\end{figure}
+\clearpage
+\newpage
+
+From the figures 15 and 16 it is obvious that cell smoothness might not have a very strong relationship with velocity but it might has a certain effect. Higher smoothness of cells make them faster as it reduces friction arising from movement and smoother cells are also less likely to combine with other cells and enzymes while traveling. 
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Report/RImages/Graphs/relationship_s.png}
+\caption{\label{fig:Mean_Distance}The image shows the relationship between average smoothness of cells and average velocities for series C (control series).}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\linewidth]{Report/RImages/Graphs/relationship_s_g.png}
+\caption{\label{fig:Mean_Distance}The image shows the relationship between average smoothness of cells and average velocities for series G (growth series).}
+\end{figure}
+\clearpage
+\subsubsection*{Image Quality and Image Resolution}
+The following table contains the comparison of the quality and resolution of the images in both series. 
+
+\begin{table}[h!]
+\centering
+\caption{Summary of Image Quality and Resolution}\label{table:Quality-Resolution}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Image}}&\multicolumn{2}{|c|}{\textbf{Control Series - A}}&\multicolumn{2}{|c|}{\textbf{Growth Series - B}}\\ 
+\cline{2-5}
+& \textbf{Size} & \textbf{Resolution} & \textbf{Size} & \textbf{Resolution} \\
+\hline
+\textbf{Image 1} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 2} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 3} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 4} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 5} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 6} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 7} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 8} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 9} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 10} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 11} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 12} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 13} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 14} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 15} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 16} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 17} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 18} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 19} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 20} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 21} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 22} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 23} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 24} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 25} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 26} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 27} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 28} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 29} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\textbf{Image 30} & [512, 512] & {inf fm} & [512, 512] & {inf fm} \\
+\hline
+\end{tabular}
+\end{table}
+All the images are [512,512] in size and have a pixel size of {inf fm}, as these are a time-lapsed series of images gathered from microscope. 
+\newpage
 \section*{Appendix 1}
 \subsection*{Question 4.1}
 \subsubsection*{Segmentation and Tracing of the Cells}
@@ -553,7 +741,7 @@ The following images were obtained after morphological operations and labeling w
   \end{subfigure}
 \end{figure}
 \clearpage
-\newline
+
 The following images were obtained after morphological operations and labeling were performed on the original set of images in Growth Series. 
 \begin{figure}[h!]
   \centering
